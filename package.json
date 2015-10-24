@@ -1,0 +1,25 @@
+{
+  "name": "pwajg-server",
+  "version": "1.0.0",
+  "description": "Simple Node js server for Discussion board.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnymachine/pwajg-server.git"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "res",
+    "api"
+  ],
+  "author": "Jan Gabriel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/johnymachine/pwajg-server/issues"
+  },
+  "homepage": "https://github.com/johnymachine/pwajg-server"
+}
