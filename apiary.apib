@@ -1,80 +1,54 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: http://pwajg-server.herokuapp.com/apiv1/
 
-# pwajg
+# pwajg-server
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+Simple Node js server for Discussion board.
 
-## Questions Collection [/questions]
+## API authentication [/auth]
 
-### List All Questions [GET]
+### Generate new AUTH token. [POST]
+
+Providing `login` and `password` of existing user returns authentication token for comunication with API. Returned token must by provided in `Auth` header with each subsequent request, otherwise you get back 401 Unauthorized status code.
+
++ Request
+
++ Parameters
+    + login: (string) - User login, preferably his email.
+    + password: (string) - The oAuth client ID
 
 + Response 200 (application/json)
-
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
-
-### Create a New Question [POST]
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
-
-+ Request (application/json)
-
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
+            "token": "ac4cb54caac5bca7ef455",
         }
 
-+ Response 201 (application/json)
++ Response 404 (application/json)
+        {
+            "message": "Sorry, bad login or password.",
+        }
 
+### Prolong token validity [PUT]
+
+This call prolongs your token validity by 30 minutes.
+
++ Request
     + Headers
 
-            Location: /questions/2
+        Auth: {token}
 
-    + Body
++ Response 200 (application/json)
+        {
+            "message": "Token prolonged.",
+        }
 
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
-            }
+### Invalidate current token. [DELETE]
+
++ Request
+    + Headers
+
+        Auth: {token}
+
++ Response 200 (application/json)
+        {
+            "message": "Token deleted.",
+        }
