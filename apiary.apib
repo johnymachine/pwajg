@@ -5,24 +5,30 @@ HOST: http://pwajg-server.herokuapp.com/apiv1/
 
 Simple Node js server for Discussion board.
 
-## API authentication [/auth]
+# Group Authentication
 
-### Generate new AUTH token. [POST]
+## API token authentication [/auth]
 
-Providing `login` and `password` of existing user returns authentication token for comunication with API. Returned token must by provided in `Auth` header with each subsequent request, otherwise you get back 401 Unauthorized status code.
+### Generate new token. [POST]
 
+Providing `login` and `password` of existing user returns authentication token for comunication with API. Returned token must by provided in `Auth` header with each subsequent request, otherwise you get back **401 Unauthorized** status code.
 + Request
 
-+ Parameters
-    + login: (string) - User login, preferably his email.
-    + password: (string) - The oAuth client ID
+    + Body
+    
+            {
+                "login": "login",
+                "password": "password"
+            }
 
 + Response 200 (application/json)
+
         {
-            "token": "ac4cb54caac5bca7ef455",
+            "token": "{ac4cb54caac5bca7ef455}",
         }
 
 + Response 404 (application/json)
+
         {
             "message": "Sorry, bad login or password.",
         }
@@ -34,9 +40,10 @@ This call prolongs your token validity by 30 minutes.
 + Request
     + Headers
 
-        Auth: {token}
+            Auth: {token}
 
 + Response 200 (application/json)
+
         {
             "message": "Token prolonged.",
         }
@@ -46,9 +53,36 @@ This call prolongs your token validity by 30 minutes.
 + Request
     + Headers
 
-        Auth: {token}
+            Auth: {token}
 
 + Response 200 (application/json)
+
         {
             "message": "Token deleted.",
         }
+
+### Get current user. [GET]
+
++ Request
+    + Headers
+
+            Auth: {token}
+
++ Response 200 (application/json)
+
+        {
+            "id": "id",
+            "name": "name"
+        }
+
+# Group User
+
+## User management [/users]
+
+# Group Threds
+
+## Threds management [/threads]
+
+# Group Posts
+
+## Posts management [/posts]
