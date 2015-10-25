@@ -14,28 +14,22 @@ Simple Node js server for Discussion board.
 Providing `login` and `password` of existing user returns authentication token for comunication with API. Returned token must by provided in `Auth` header with each subsequent request, otherwise you get back **401 Unauthorized** status code.
 + Request
 
-    + Body
-    
-            {
-                "login": "login",
-                "password": "password"
-            }
+        {
+            "login": "login",
+            "password": "password"
+        }
 
 + Response 200 (application/json)
 
         {
-            "token": "{ac4cb54caac5bca7ef455}",
+            "token": "ac4cb54caac5bca7ef455",
         }
 
 + Response 404 (application/json)
 
-        {
-            "message": "Sorry, bad login or password.",
-        }
-
 ### Prolong token validity [PUT]
 
-This call prolongs your token validity by 30 minutes.
+This call prolongs your token validity by 30 minutes. Note that every call with token prolongs token validity. This could be used to keep token alive by calling this resource on background.
 
 + Request
     + Headers
@@ -43,10 +37,6 @@ This call prolongs your token validity by 30 minutes.
             Auth: {token}
 
 + Response 200 (application/json)
-
-        {
-            "message": "Token prolonged.",
-        }
 
 ### Invalidate current token. [DELETE]
 
@@ -57,11 +47,7 @@ This call prolongs your token validity by 30 minutes.
 
 + Response 200 (application/json)
 
-        {
-            "message": "Token deleted.",
-        }
-
-### Get current user. [GET]
+### Get current user id. [GET]
 
 + Request
     + Headers
@@ -71,13 +57,32 @@ This call prolongs your token validity by 30 minutes.
 + Response 200 (application/json)
 
         {
-            "id": "id",
-            "name": "name"
+            "user_id": "id",
         }
-
+        
 # Group User
 
-## User management [/users]
+## User details [/users/{user_id}]
+
++ Parameters
+    + user_id (number) - User identificator
+
+### Get user by id. [GET]
+
++ Request
+    + Headers
+
+            Auth: {token}
+
+
++ Response 200 (application/json)
+
+        {
+            "user_id": "id",
+            "login": "login"
+        }
+        
++ Response 404 (application/json)
 
 # Group Threds
 
