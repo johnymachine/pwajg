@@ -163,7 +163,7 @@ This call prolongs your token validity by another 30 minutes. Note that every ca
             "crated": "timestamp"
         }
 
-### Delete thread [POST]
+### Delete thread [DELETE]
 Deletes thread with all the posts, only owner (otherwise **403 Forbiden**) of the thread can do it.
 
 + Request
@@ -212,6 +212,7 @@ Deletes thread with all the posts, only owner (otherwise **403 Forbiden**) of th
             Auth: {token}
 
     + Body
+    
             {
                 "body": "body"
             }
@@ -233,6 +234,7 @@ Deletes thread with all the posts, only owner (otherwise **403 Forbiden**) of th
             Auth: {token}
 
     + Body
+    
             {
                 "post_id": "post_id"
             }
