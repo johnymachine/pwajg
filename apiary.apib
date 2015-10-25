@@ -9,7 +9,7 @@ Simple Node js server for Discussion board.
 
 ## API token authentication [/auth]
 
-### Generate new token. [POST]
+### Generate new token [POST]
 
 Providing `login` and `password` of existing user returns authentication token for comunication with API. Returned token must by provided in `Auth` header with each subsequent request, otherwise you get back **401 Unauthorized** status code.
 + Request
@@ -29,7 +29,7 @@ Providing `login` and `password` of existing user returns authentication token f
 
 ### Prolong token validity [PUT]
 
-This call prolongs your token validity by 30 minutes. Note that every call with token prolongs token validity. This could be used to keep token alive by calling this resource on background.
+This call prolongs your token validity by another 30 minutes. Note that every call with token prolongs token validity. This could be used to keep token alive by calling this resource on background.
 
 + Request
     + Headers
@@ -38,7 +38,7 @@ This call prolongs your token validity by 30 minutes. Note that every call with 
 
 + Response 200 (application/json)
 
-### Invalidate current token. [DELETE]
+### Invalidate current token [DELETE]
 
 + Request
     + Headers
@@ -47,7 +47,7 @@ This call prolongs your token validity by 30 minutes. Note that every call with 
 
 + Response 200 (application/json)
 
-### Get current user id. [GET]
+### Get authentication user id [GET]
 
 + Request
     + Headers
@@ -88,7 +88,7 @@ This call prolongs your token validity by 30 minutes. Note that every call with 
 
 ## Threds management [/threads]
 
-### Get all threads. [GET]
+### Get all threads [GET]
 
 + Request
     + Headers
@@ -104,7 +104,6 @@ This call prolongs your token validity by 30 minutes. Note that every call with 
             "user_id": "user_id",
             "name": "name",
             "body": "body",
-            "posts": ["post_id_1", "post_id_2", "post_id_3"],
             "crated": "timestamp"
         },
         {
@@ -112,7 +111,6 @@ This call prolongs your token validity by 30 minutes. Note that every call with 
             "user_id": "user_id",
             "name": "name",
             "body": "body",
-            "posts": ["post_id_1", "post_id_2", "post_id_3"],
             "crated": "timestamp"
         }
         ]
@@ -137,15 +135,108 @@ This call prolongs your token validity by 30 minutes. Note that every call with 
             "user_id": "user_id",
             "name": "name",
             "body": "body",
-            "posts": ["post_id_1", "post_id_2", "post_id_3"],
             "crated": "timestamp"
         }
 
-# Group Posts
+### Create new thread [POST]
 
-## Posts management [/posts/]
++ Request
+    + Headers
 
-## Post detail [/posts/{post_id}]
+            Auth: {token}
+
+    + Body
+
+            {
+                "name": "name",
+                "body": "body",
+            }
+
+
++ Response 201 (application/json)
+
+        {
+            "thread_id": "thread_id",
+            "user_id": "user_id",
+            "name": "name",
+            "body": "body",
+            "crated": "timestamp"
+        }
+
+### Delete thread [POST]
+Deletes thread with all the posts, only owner (otherwise **403 Forbiden**) of the thread can do it.
+
++ Request
+    + Headers
+
+            Auth: {token}
+
++ Response 204 (application/json)
+
++ Response 403 (application/json)
+
+## Posts in thread [/threads/{thread_id}/posts]
 
 + Parameters
-    + post_id (id) - Post identificator
+    + thread_id (id) - Thread identificator
+    
+### Get all posts in thread [GET]
+
++ Request
+    + Headers
+
+            Auth: {token}
+
++ Response 200 (application/json)
+
+        [
+        {
+            "post_id": "post_id1",
+            "user_id": "user_id",
+            "body": "body",
+            "crated": "timestamp"
+        },
+        {
+            "post_id": "post_id2",
+            "user_id": "user_id",
+            "body": "body",
+            "crated": "timestamp"
+        }
+        ]
+
+### Post to thread [POST]
+
++ Request
+    + Headers
+
+            Auth: {token}
+
+    + Body
+            {
+                "body": "body"
+            }
+
++ Response 201 (application/json)
+        
+        {
+            "post_id": "post_id",
+            "user_id": "user_id",
+            "body": "body",
+            "crated": "timestamp"
+        }
+
+### Delete post in thread [DELETE]
+
++ Request
+    + Headers
+
+            Auth: {token}
+
+    + Body
+            {
+                "post_id": "post_id"
+            }
+
++ Response 204 (application/json)
+
++ Response 403 (application/json)
