@@ -8,10 +8,11 @@ Simple Node js server for Discussion board.
 # Group Authentication
 
 ## API token authentication [/auth]
+Authentization resource for session managment.
 
-### Generate new token [POST]
+### Request new token [POST]
 
-Providing `login` and `password` of existing user returns authentication token for comunication with API. Returned token must by provided in `Auth` header with each subsequent request, otherwise you get back **401 Unauthorized** status code.
+Providing correct `login` and `password` of existing user returns authentication token for comunication with API. Returned token must by provided in `Auth` header with each subsequent request, otherwise you get back **401 Unauthorized** status code.
 + Request
 
         {
@@ -39,6 +40,7 @@ This call prolongs your token validity by another 30 minutes. Note that every ca
 + Response 200 (application/json)
 
 ### Invalidate current token [DELETE]
+By this action you invalidate your token. You wont be able to communicate with API, until you perform you repeat authentification process.
 
 + Request
     + Headers
@@ -47,7 +49,8 @@ This call prolongs your token validity by another 30 minutes. Note that every ca
 
 + Response 200 (application/json)
 
-### Get authentication user id [GET]
+### Get authenticated user [GET]
+This action provides user information based on provided token.
 
 + Request
     + Headers
@@ -58,6 +61,7 @@ This call prolongs your token validity by another 30 minutes. Note that every ca
 
         {
             "user_id": "id",
+            "login": "login"
         }
         
 # Group User
@@ -67,7 +71,8 @@ This call prolongs your token validity by another 30 minutes. Note that every ca
 + Parameters
     + user_id (id) - User identificator
 
-### Get user by id. [GET]
+### Get user details [GET]
+Get detailed information about user based on provided id.
 
 + Request
     + Headers
@@ -89,6 +94,7 @@ This call prolongs your token validity by another 30 minutes. Note that every ca
 ## Threds management [/threads]
 
 ### Get all threads [GET]
+Get all threads in application.
 
 + Request
     + Headers
@@ -115,30 +121,8 @@ This call prolongs your token validity by another 30 minutes. Note that every ca
         }
         ]
 
-## Thread detail [/threads/{thread_id}]
-
-+ Parameters
-    + thread_id (id) - Thread identificator
-    
-### Get detail [GET]
-
-+ Request
-    + Headers
-
-            Auth: {token}
-
-
-+ Response 200 (application/json)
-
-        {
-            "thread_id": "thread_id1",
-            "user_id": "user_id",
-            "name": "name",
-            "body": "body",
-            "crated": "timestamp"
-        }
-
 ### Create new thread [POST]
+Create new thread from provided data. Threads with same name are allowed.
 
 + Request
     + Headers
@@ -163,8 +147,32 @@ This call prolongs your token validity by another 30 minutes. Note that every ca
             "crated": "timestamp"
         }
 
+## Thread detail [/threads/{thread_id}]
+
++ Parameters
+    + thread_id (id) - Thread identificator
+    
+### Get thread detail [GET]
+Get detailed description od thread.
+
++ Request
+    + Headers
+
+            Auth: {token}
+
+
++ Response 200 (application/json)
+
+        {
+            "thread_id": "thread_id1",
+            "user_id": "user_id",
+            "name": "name",
+            "body": "body",
+            "crated": "timestamp"
+        }
+
 ### Delete thread [DELETE]
-Deletes thread with all the posts, only owner (otherwise **403 Forbiden**) of the thread can do it.
+Deletes thread with all the posts in it. Only owner of the thread can do it. (otherwise **403 Forbiden**)
 
 + Request
     + Headers
@@ -181,6 +189,7 @@ Deletes thread with all the posts, only owner (otherwise **403 Forbiden**) of th
     + thread_id (id) - Thread identificator
     
 ### Get all posts in thread [GET]
+List of all the post inside thread.
 
 + Request
     + Headers
@@ -205,6 +214,7 @@ Deletes thread with all the posts, only owner (otherwise **403 Forbiden**) of th
         ]
 
 ### Post to thread [POST]
+Add new post to the thread.
 
 + Request
     + Headers
@@ -226,7 +236,8 @@ Deletes thread with all the posts, only owner (otherwise **403 Forbiden**) of th
             "crated": "timestamp"
         }
 
-### Delete post in thread [DELETE]
+### Delete post from thread [DELETE]
+Delete post from thread. Only owner of the post can do it. (otherwise **403 Forbiden**)
 
 + Request
     + Headers
