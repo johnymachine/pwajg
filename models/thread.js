@@ -1,8 +1,8 @@
 'use strict'
-
 var mongoose = require('mongoose');
 var model = require('./model.js');
 var Post = require('./post.js');
+
 var Schema = mongoose.Schema;
 
 var threadSchema = new Schema({

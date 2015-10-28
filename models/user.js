@@ -1,9 +1,10 @@
 'use strict'
-
 var mongoose = require('mongoose');
 var model = require('./model.js');
 var Post = require('./post.js');
 var Thread = require('./thread.js');
+var hash = require('../util/hash.js');
+
 var Schema = mongoose.Schema;
 
 var userSchema = new Schema({
@@ -25,7 +26,7 @@ var hashPassword = function hashPassword(next) {
     if (!this.isModified('password'))
         return next();
     else {
-        var hash = crypto.createHash('sha512').update(this.password).digest("hex");
+        var hash = hash.getHash(this.password);
         this.password = hash;
         return next();
     }
@@ -43,8 +44,14 @@ var deleteAllMyThreads = function deleteAllMyThreads(next) {
     });
 }
 
+var deleteMyAuth = function deleteAllMyThreads(next) {
+    Auth.remove({
+        _owner: this._id
+    });
+}
+
 userSchema.pre('save', hashPassword, model.updateTimestamps);
-userSchema.pre('remove', deleteAllMyPosts, deleteAllMyThreads);
+userSchema.pre('remove', deleteAllMyPosts, deleteAllMyThreads, deleteMyAuth);
 
 var User = mongoose.model('User', userSchema);
 module.exports = User;

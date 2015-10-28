@@ -1,7 +1,7 @@
 'use strict'
-
 var mongoose = require('mongoose');
 var model = require('./model.js');
+
 var Schema = mongoose.Schema;
 
 var authSchema = new Schema({
