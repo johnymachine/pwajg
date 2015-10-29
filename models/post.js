@@ -15,7 +15,10 @@ var postSchema = new Schema({
         ref: 'Thread',
         required: true
     },
-    body: String,
+    text: {
+        type: String,
+        required: true
+    },
     created_at: Date,
     updated_at: Date
 });

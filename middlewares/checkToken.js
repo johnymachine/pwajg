@@ -18,9 +18,9 @@ module.exports = {
                     before30Minutes.setMinutes(before30Minutes.getMinutes() - 30);
                     if (auth.updated_at > before30Minutes) {
                         res.locals.auth = auth;
-                        res.locals.user = auth._owner;
+                        res.locals.me = auth._owner;
                         auth.save();
-                        next();
+                        return next();
                     } else {
                         auth.remove(function(err, auth) {
                             if (err) {

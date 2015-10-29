@@ -26,8 +26,7 @@ var hashPassword = function hashPassword(next) {
     if (!this.isModified('password'))
         return next();
     else {
-        var hash = hash.getHash(this.password);
-        this.password = hash;
+        this.password = hash.getHash(this.password);
         return next();
     }
 }

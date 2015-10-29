@@ -10,7 +10,7 @@ var threadSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    body: {
+    text: {
         type: String,
         required: true,
         unique: true

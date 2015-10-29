@@ -1,5 +1,4 @@
 'use strict'
-
 module.exports = {
     updateTimestamps: function(next) {
         var currentDate = new Date();

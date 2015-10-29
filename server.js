@@ -14,21 +14,15 @@ var router = express.Router();
 var authRouter = require('./routes/auth.js');
 var usersRouter = require('./routes/users.js');
 var threadsRouter = require('./routes/threads.js');
-var isTokenValid = require('./middlewares/checkToken.js').isTokenValid;
+var postsRouter = require('./routes/posts.js');
 
 //mongoose
 var mongoose = require('mongoose');
 
-// mongoose models
-var Auth = require('./models/auth.js');
-var User = require('./models/user.js');
-var Thread = require('./models/thread.js');
-var Post = require('./models/post.js');
-
 //connect to mongodb
 mongoose.connect(uri, function(err, res) {
     if (err) {
-        console.log("Error connecting to Mongodb:/n" + err);
+        console.log("Error connecting to Mongodb: " + err);
     } else {
         console.log("Successfully connected to Mongodb.");
     }
@@ -51,6 +45,7 @@ router.get('/', function(req, res) {
 router.use('/auth/', authRouter);
 router.use('/users/', usersRouter);
 router.use('/threads/', threadsRouter);
+router.use('/posts/', postsRouter);
 
 // bind main router and make prefix /apiv1
 app.use("/apiv1", router);
