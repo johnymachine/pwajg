@@ -40,7 +40,8 @@ authRouter.route('/')
                         }
                     });
                     res.json({
-                        token: token
+                        token: auth.token,
+                        user_id: auth._owner._id
                     });
                 } else
                     res.sendStatus(404);
@@ -48,7 +49,7 @@ authRouter.route('/')
     })
     // gets current user
     .get(isTokenValid, function(req, res, next) {
-        res.json(res.locals.user);
+        res.json(res.locals.me);
     })
     // prolong token
     .put(isTokenValid, function(req, res, next) {
@@ -57,7 +58,9 @@ authRouter.route('/')
     // invalidate current token
     .delete(isTokenValid, function(req, res, next) {
         res.locals.me = undefined;
-        res.locals.auth.remove(function(err, auth) {
+        Auth
+        .findById(res.locals.auth._id)
+        .remove(function(err, auth) {
             if (err) {
                 console.log(err);
                 res.sendStatus(500);

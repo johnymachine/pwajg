@@ -1,13 +1,14 @@
 'use strict'
 var threadsRouter = require('express').Router();
 var Thread = require('../models/thread.js');
-var Thread = require('../models/post.js');
+var Post = require('../models/post.js');
 
 var isTokenValid = require('../middlewares/checkToken.js').isTokenValid;
+var sanetizePagination = require('../middlewares/sanetizePagination.js').sanetizePagination;
 
 threadsRouter
     .param('thread_id', function(req, res, next, thread_id) {
-        Post
+        Thread
             .findOne({
                 '_id': thread_id
             })
@@ -24,12 +25,14 @@ threadsRouter
     })
 
 var checkUserIsThreadOwner = function checkUserIsThreadOwner(req, res, next) {
-    if (res.locals.thread._owner == res.locals.me._id) {
+    if (res.locals.thread._owner.equals(res.locals.me._id)) {
         return next();
     } else
         res.sendStatus(403);
 };
 
+// use authorization on all routes
+threadsRouter.use(isTokenValid);
 
 // application router for /threads
 threadsRouter.route('/')
@@ -38,26 +41,42 @@ threadsRouter.route('/')
         return next();
     })
     // get all threads
-    .get(isTokenValid, function(req, res, next) {
-        var page = req.query.page || 1;
-        var itemsOnPage = 20;
+    .get(sanetizePagination, function(req, res, next) {
         Thread
             .find()
-            .skip((page - 1) * itemsOnPage)
-            .limit(itemsOnPage)
-            .exec(function(err, threads) {
-                if (err)
+            .count(function(err, count) {
+                if (err) {
+                    console.log(err);
                     res.sendStatus(500);
-                if (threads)
-                    res.json(threads);
-                else
+                } else if (count) {
+                    Thread
+                        .find()
+                        .sort({
+                            created_on: res.locals.order
+                        })
+                        .skip((res.locals.page - 1) * res.locals.size)
+                        .limit(res.locals.size)
+                        .exec(function(err, threads) {
+                            if (err) {
+                                console.log(err);
+                                res.sendStatus(500);
+                            } else if (threads) {
+                                res.setHeader("Count", count);
+                                res.setHeader("Page", res.locals.page);
+                                res.setHeader("Pages", Math.ceil(count / res.locals.size));
+                                res.setHeader("Size", res.locals.size);
+                                res.json(threads);
+                            } else
+                                res.sendStatus(404);
+                        });
+                } else
                     res.sendStatus(404);
             });
     })
     // create new thread
     .post(function(req, res, next) {
         var thread = new Thread({
-            name: req.body.text,
+            text: req.body.text,
             _owner: res.locals.me._id
         });
         thread.save(function(err, thread) {
@@ -66,7 +85,7 @@ threadsRouter.route('/')
                 if (err["code"] == 11000) res.sendStatus(409);
                 else res.sendStatus(500);
             } else {
-                res.json(thread);
+                res.status(201).json(thread);
             }
         });
     });
@@ -78,11 +97,11 @@ threadsRouter.route('/:thread_id')
     .all(function(req, res, next) {
         return next();
     })
-    .get(isTokenValid, function(req, res, next) {
+    .get(function(req, res, next) {
         res.json(res.locals.thread);
     })
     // update thread if you are owner
-    .put(isTokenValid, checkUserIsThreadOwner, function(req, res, next) {
+    .put(checkUserIsThreadOwner, function(req, res, next) {
         res.locals.thread.text = req.body.text
         res.locals.thread.save(function(err, thread) {
             if (err) {
@@ -95,15 +114,17 @@ threadsRouter.route('/:thread_id')
         });
     })
     // delete post if you are owner
-    .delete(isTokenValid, checkUserIsThreadOwner, function(req, res, next) {
-        res.locals.thread.remove(function(err) {
-            if (err) {
-                console.log(err);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(204);
-            }
-        });
+    .delete(checkUserIsThreadOwner, function(req, res, next) {
+        Thread
+            .findById(res.locals.thread._id)
+            .remove(function(err) {
+                if (err) {
+                    console.log(err);
+                    res.sendStatus(500);
+                } else {
+                    res.sendStatus(204);
+                }
+            });
     });
 
 
@@ -114,7 +135,7 @@ threadsRouter.route('/:thread_id/posts')
         return next();
     })
     // post to thread
-    .post(isTokenValid, function(req, res, next) {
+    .post(function(req, res, next) {
         var post = new Post({
             text: req.body.text,
             _thread: res.locals.thread._id,
@@ -126,22 +147,43 @@ threadsRouter.route('/:thread_id/posts')
                 if (err["code"] == 11000) res.sendStatus(409);
                 else res.sendStatus(500);
             } else {
-                res.json(post);
+                res.status(201).json(post);
             }
         });
     })
     // get all post in thread
-    .get(isTokenValid, function(req, res, next) {
+    .get(sanetizePagination, function(req, res, next) {
+        var criteria = {
+            _thread: res.locals.thread._id
+        };
         Post
-            .find({
-                _thread: res.locals.thread._id
-            })
-            .exec(function(err, posts) {
-                if (err)
+            .find(criteria)
+            .count(function(err, count) {
+                if (err) {
+                    console.log(err);
                     res.sendStatus(500);
-                if (posts)
-                    res.json(posts);
-                else
+                } else if (count) {
+                    Post
+                        .find(criteria)
+                        .sort({
+                            created_on: res.locals.order
+                        })
+                        .skip((res.locals.page - 1) * res.locals.size)
+                        .limit(res.locals.size)
+                        .exec(function(err, threads) {
+                            if (err) {
+                                console.log(err);
+                                res.sendStatus(500);
+                            } else if (threads) {
+                                res.setHeader("Count", count);
+                                res.setHeader("Page", res.locals.page);
+                                res.setHeader("Pages", Math.ceil(count / res.locals.size));
+                                res.setHeader("Size", res.locals.size);
+                                res.json(threads);
+                            } else
+                                res.sendStatus(404);
+                        });
+                } else
                     res.sendStatus(404);
             });
     });

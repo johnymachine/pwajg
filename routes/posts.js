@@ -29,27 +29,8 @@ var checkUserIsPostOwner = function checkUserIsPostOwner(req, res, next) {
         res.sendStatus(403);
 };
 
-// application router for /posts
-postsRouter.route('/')
-    // midleware for all /posts routes
-    .all(function(req, res, next) {
-        return next();
-    })
-    // get all users
-    .get(isTokenValid, function(req, res, next) {
-        Post
-            .find()
-            .select('-password -__v')
-            .exec(function(err, posts) {
-                if (err) {
-                    console.log(err)
-                    res.sendStatus(500);
-                } else if (posts)
-                    res.json(posts);
-                else
-                    res.sendStatus(404);
-            });
-    })
+// use authorization on all routes
+postsRouter.use(isTokenValid);
 
 // application router for /posts/:post_id
 postsRouter.route('/:post_id')
@@ -58,11 +39,11 @@ postsRouter.route('/:post_id')
         return next();
     })
     // get post by id
-    .get(isTokenValid, function(req, res, next) {
+    .get(function(req, res, next) {
         res.json(res.locals.post);
     })
     // update post if you are owner
-    .put(isTokenValid, checkUserIsPostOwner, function(req, res, next) {
+    .put(checkUserIsPostOwner, function(req, res, next) {
         res.locals.post.text = req.body.text
         res.locals.post.save(function(err, post) {
             if (err) {
@@ -75,15 +56,17 @@ postsRouter.route('/:post_id')
         });
     })
     // delete post if you are owner
-    .delete(isTokenValid, checkUserIsPostOwner, function(req, res, next) {
-        res.locals.post.remove(function(err) {
-            if (err) {
-                console.log(err);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(204);
-            }
-        });
+    .delete(checkUserIsPostOwner, function(req, res, next) {
+        Post
+            .findById(res.locals.post._id)
+            .remove(function(err) {
+                if (err) {
+                    console.log(err);
+                    res.sendStatus(500);
+                } else {
+                    res.sendStatus(204);
+                }
+            });
     });
 
 module.exports = postsRouter;

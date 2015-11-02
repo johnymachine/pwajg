@@ -1,3 +1,4 @@
+'use strict'
 var Auth = require('../models/auth.js');
 
 module.exports = {
