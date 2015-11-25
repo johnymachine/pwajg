@@ -52,7 +52,7 @@ threadsRouter.route('/')
                     Thread
                         .find()
                         .sort({
-                            created_on: res.locals.order
+                            created_at: res.locals.order
                         })
                         .skip((res.locals.page - 1) * res.locals.size)
                         .limit(res.locals.size)
@@ -166,7 +166,7 @@ threadsRouter.route('/:thread_id/posts')
                     Post
                         .find(criteria)
                         .sort({
-                            created_on: res.locals.order
+                            created_at: res.locals.order
                         })
                         .skip((res.locals.page - 1) * res.locals.size)
                         .limit(res.locals.size)

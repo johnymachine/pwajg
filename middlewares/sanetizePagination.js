@@ -1,6 +1,6 @@
 'use strict'
 module.exports = {
-    sanetizePagination: function(req, res, next) { //order=desc; page=1; size=20
+    sanetizePagination: function(req, res, next) { //order=asc; page=1; size=20
         var validOrders = {
             desc: "desc",
             asc: "asc"
