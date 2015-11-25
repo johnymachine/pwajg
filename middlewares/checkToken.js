@@ -1,14 +1,21 @@
 'use strict'
 var Auth = require('../models/auth.js');
-var mongoose = require('mongoose');
 var User = require('../models/user.js');
 
 module.exports = {
     isTokenValid: function(req, res, next) {
         var token = req.headers["token"];
         if (token == 'test') {
-            var id = mongoose.Types.ObjectId('5637286e9f35d76d2d6b05c0');
-            res.locals.me = User.findById(id);
+            var me = User
+                .findOne()
+                .exec(function(err, user) {
+                    if (err) {
+                        console.log(err);
+                        res.sendStatus(500);
+                    } else {
+                        res.locals.me = user;
+                    }
+                });
             return next();
         }
         Auth
