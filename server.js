@@ -42,7 +42,7 @@ router.all('*', function(req, res, next) {
 });
 
 router.options('*', function(req, res) {
-    res.send(200);
+    res.sendStatus(200);
 });
 
 // root with API docs

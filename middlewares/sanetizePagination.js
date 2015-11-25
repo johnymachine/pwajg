@@ -5,7 +5,7 @@ module.exports = {
             desc: "desc",
             asc: "asc"
         };
-        res.locals.order = validOrders[req.query.order] || "desc";
+        res.locals.order = validOrders[req.query.order] || "asc";
         res.locals.page = Number(req.query.page) || 1;
         res.locals.size = Number(req.query.size) || 20;
         return next();
