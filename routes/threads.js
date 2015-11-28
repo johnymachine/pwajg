@@ -83,8 +83,14 @@ threadsRouter.route('/')
     })
     // create new thread
     .post(function(req, res, next) {
+        var threadText = req.body.title;
+        var postText = req.body.title;
+        if ((threadText == "" || threadText == null) || ((postText == "" || postText == null))) {
+            return res.sendStatus(400);
+        }
+
         var thread = new Thread({
-            text: req.body.title,
+            text: threadText,
             _owner: res.locals.me._id
         });
         thread.save(function(err, thread) {
@@ -97,7 +103,7 @@ threadsRouter.route('/')
                 }
             } else if (thread) {
                 var post = new Post({
-                    text: req.body.body,
+                    text: postText,
                     _thread: thread._id,
                     is_main: true,
                     _owner: res.locals.me._id
