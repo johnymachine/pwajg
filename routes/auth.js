@@ -1,6 +1,5 @@
 'use strict'
 var authRouter = require('express').Router();
-
 var Auth = require('../models/auth.js');
 var User = require('../models/user.js');
 
@@ -16,15 +15,14 @@ authRouter.route('/')
     // create session based on credentials and get token
     .post(function(req, res, next) {
         User
-            .findOne()
-            .where({
+            .findOne({
                 username: req.body.username,
                 password: hash.getHash(req.body.password)
             })
             .exec(function(err, user) {
                 if (err) {
                     console.log(err);
-                    res.sendStatus(500);
+                    return res.sendStatus(500);
                 } else if (user) {
                     var timestamp = Date();
                     var token = hash.getHash(user._id + user.name + user.username + user.password + timestamp)
@@ -36,37 +34,36 @@ authRouter.route('/')
                     auth.save(function(err, auth) {
                         if (err) {
                             console.log(err);
-                            res.sendStatus(500);
+                            return res.sendStatus(500);
+                        } else if (auth) {
+                            auth._owner = user;
+                            res.status(201).json(auth);
+                        } else {
+                            return res.sendStatus(500);
                         }
                     });
-                    res.json({
-                        token: auth.token,
-                        user_id: auth._owner._id
-                    });
                 } else
-                    res.sendStatus(404);
+                    return res.sendStatus(404);
             });
     })
     // gets current user
     .get(isTokenValid, function(req, res, next) {
-        res.json(res.locals.me);
+        return res.status(200).json(res.locals.me);
     })
     // prolong token
     .put(isTokenValid, function(req, res, next) {
-        res.sendStatus(204);
+        return res.sendStatus(204);
     })
     // invalidate current token
     .delete(isTokenValid, function(req, res, next) {
-        res.locals.me = undefined;
-        Auth
-        .findById(res.locals.auth._id)
-        .remove(function(err, auth) {
-            if (err) {
-                console.log(err);
-                res.sendStatus(500);
-            } else
-                res.sendStatus(204);
-        });
+        res.locals.auth
+            .remove(function(err, auth) {
+                if (err) {
+                    console.log(err);
+                    return res.sendStatus(500);
+                } else
+                    return res.sendStatus(204);
+            });
     });
 
 module.exports = authRouter;

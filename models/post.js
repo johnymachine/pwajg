@@ -15,6 +15,10 @@ var postSchema = new Schema({
         ref: 'Thread',
         required: true
     },
+    is_main: {
+        type: Boolean,
+        default: false
+    },
     text: {
         type: String,
         required: true

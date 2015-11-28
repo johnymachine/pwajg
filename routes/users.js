@@ -4,6 +4,7 @@ var User = require('../models/user.js');
 
 var hash = require('../util/hash.js');
 var isTokenValid = require('../middlewares/checkToken.js').isTokenValid;
+var sanetizePagination = require('../middlewares/sanetizePagination.js').sanetizePagination;
 
 usersRouter
     .param('user_id', function(req, res, next, user_id) {
@@ -15,20 +16,21 @@ usersRouter
             .exec(function(err, user) {
                 if (err) {
                     console.log(err)
-                    res.sendStatus(500);
+                    return res.sendStatus(500);
                 } else if (user) {
                     res.locals.user = user;
                     return next();
-                } else
-                    res.sendStatus(404);
+                } else {
+                    return res.sendStatus(404);
+                }
             });
-    })
+    });
 
 var checkUserIsMe = function checkUserIsMe(req, res, next) {
-    if (res.locals.user._id == res.locals.me._id) {
+    if (res.locals.user._id.equals(res.locals.me._id)) {
         return next();
     } else
-        res.sendStatus(403);
+        return res.sendStatus(403);
 };
 
 // application router for /users/
@@ -38,18 +40,42 @@ usersRouter.route('/')
         return next();
     })
     //get all users
-    .get(isTokenValid, function(req, res, next) {
+    .get(isTokenValid, sanetizePagination, function(req, res, next) {
         User
             .find()
-            .select('-password -__v')
-            .exec(function(err, users) {
+            .count(function(err, count) {
                 if (err) {
-                    console.log(err)
-                    res.sendStatus(500);
-                } else if (users)
-                    res.json(users);
-                else
-                    res.sendStatus(404);
+                    console.log(err);
+                    return res.sendStatus(500);
+                } else if (count) {
+                    User
+                        .find()
+                        .sort({
+                            created_at: res.locals.order
+                        })
+                        .skip((res.locals.page - 1) * res.locals.size)
+                        .limit(res.locals.size)
+                        .exec(function(err, users) {
+                            if (err) {
+                                console.log(err);
+                                return res.sendStatus(500);
+                            } else if (users) {
+                                res.setHeader("count", count);
+                                res.setHeader("page", res.locals.page);
+                                res.setHeader("pages", Math.ceil(count / res.locals.size));
+                                res.setHeader("size", res.locals.size);
+                                return res.status(200).json(users);
+                            } else {
+                                return res.sendStatus(500);
+                            }
+                        });
+                } else {
+                    res.setHeader("count", 0);
+                    res.setHeader("page", 0);
+                    res.setHeader("pages", 0);
+                    res.setHeader("size", res.locals.size);
+                    return res.status(200).json([]);
+                }
             });
     })
     // create new user
@@ -63,12 +89,14 @@ usersRouter.route('/')
         user.save(function(err, user) {
             if (err) {
                 console.log(err);
-                if (err["code"] == 11000) res.sendStatus(409);
-                else res.sendStatus(500);
+                if (err["code"] == 11000) {
+                    return res.sendStatus(409);
+                } else {
+                    return res.sendStatus(500);
+                }
             } else {
                 user.password = undefined;
-                user.__v = undefined;
-                res.status(201).json(user);
+                return res.status(201).json(user);
             }
         });
     });
@@ -83,7 +111,7 @@ usersRouter.route('/:user_id')
     })
     // get user by id
     .get(function(req, res, next) {
-        res.json(res.locals.user);
+        return res.json(res.locals.user);
     })
     // update my user info
     .put(checkUserIsMe, function(req, res, next) {
@@ -94,15 +122,14 @@ usersRouter.route('/:user_id')
         res.locals.user.save(function(err, user) {
             if (err) {
                 console.log(err);
-                if (err["code"] == 11000) res.sendStatus(409);
-                else res.sendStatus(500);
+                if (err["code"] == 11000) {
+                    return res.sendStatus(409);
+                } else {
+                    return res.sendStatus(500);
+                }
             } else {
-                res.locals.me = user;
-                res.locals.user = user;
-                res.locals.auth._owner = user;
                 user.password = undefined;
-                user.__v = undefined;
-                res.json(user);
+                return res.status(200).json(user);
             }
         });
     })
@@ -111,11 +138,9 @@ usersRouter.route('/:user_id')
         res.locals.user.remove(function(err) {
             if (err) {
                 console.log(err);
-                res.sendStatus(500);
+                return res.sendStatus(500);
             } else {
-                res.locals.me = null;
-                res.locals.user = null;
-                res.locals.auth = null;
+                return res.sendStatus(204);
             }
         });
     });

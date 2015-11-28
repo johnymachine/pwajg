@@ -8,7 +8,10 @@ var hash = require('../util/hash.js');
 var Schema = mongoose.Schema;
 
 var userSchema = new Schema({
-    name: String,
+    name: {
+        type: String,
+        default: 'John Doe'
+    },
     email: {
         type: String,
         required: true,

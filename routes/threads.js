@@ -6,33 +6,34 @@ var Post = require('../models/post.js');
 var isTokenValid = require('../middlewares/checkToken.js').isTokenValid;
 var sanetizePagination = require('../middlewares/sanetizePagination.js').sanetizePagination;
 
+// use authorization on all routes
+threadsRouter.use(isTokenValid);
+
 threadsRouter
     .param('thread_id', function(req, res, next, thread_id) {
         Thread
             .findOne({
                 '_id': thread_id
             })
+            .populate('_owner')
             .exec(function(err, thread) {
                 if (err) {
                     console.log(err)
-                    res.sendStatus(500);
+                    return res.sendStatus(500);
                 } else if (thread) {
                     res.locals.thread = thread;
                     return next();
                 } else
-                    res.sendStatus(404);
+                    return res.sendStatus(404);
             });
-    })
+    });
 
 var checkUserIsThreadOwner = function checkUserIsThreadOwner(req, res, next) {
     if (res.locals.thread._owner.equals(res.locals.me._id)) {
         return next();
     } else
-        res.sendStatus(403);
+        return res.sendStatus(403);
 };
-
-// use authorization on all routes
-threadsRouter.use(isTokenValid);
 
 // application router for /threads
 threadsRouter.route('/')
@@ -47,7 +48,7 @@ threadsRouter.route('/')
             .count(function(err, count) {
                 if (err) {
                     console.log(err);
-                    res.sendStatus(500);
+                    return res.sendStatus(500);
                 } else if (count) {
                     Thread
                         .find()
@@ -56,40 +57,67 @@ threadsRouter.route('/')
                         })
                         .skip((res.locals.page - 1) * res.locals.size)
                         .limit(res.locals.size)
+                        .populate('_owner')
                         .exec(function(err, threads) {
                             if (err) {
                                 console.log(err);
-                                res.sendStatus(500);
+                                return res.sendStatus(500);
                             } else if (threads) {
-                                res.setHeader("Count", count);
-                                res.setHeader("Page", res.locals.page);
-                                res.setHeader("Pages", Math.ceil(count / res.locals.size));
-                                res.setHeader("Size", res.locals.size);
-                                res.json(threads);
-                            } else
-                                res.sendStatus(404);
+                                res.setHeader("count", count);
+                                res.setHeader("page", res.locals.page);
+                                res.setHeader("pages", Math.ceil(count / res.locals.size));
+                                res.setHeader("size", res.locals.size);
+                                return res.status(200).json(threads);
+                            } else {
+                                return res.sendStatus(500);
+                            }
                         });
-                } else
-                    res.sendStatus(404);
+                } else {
+                    res.setHeader("count", 0);
+                    res.setHeader("page", 0);
+                    res.setHeader("pages", 0);
+                    res.setHeader("size", res.locals.size);
+                    return res.status(200).json([]);
+                }
             });
     })
     // create new thread
     .post(function(req, res, next) {
         var thread = new Thread({
-            text: req.body.text,
+            text: req.body.title,
             _owner: res.locals.me._id
         });
         thread.save(function(err, thread) {
             if (err) {
                 console.log(err);
-                if (err["code"] == 11000) res.sendStatus(409);
-                else res.sendStatus(500);
+                if (err["code"] == 11000) {
+                    res.sendStatus(409);
+                } else {
+                    res.sendStatus(500);
+                }
+            } else if (thread) {
+                var post = new Post({
+                    text: req.body.body,
+                    _thread: thread._id,
+                    is_main: true,
+                    _owner: res.locals.me._id
+                });
+                post.save(function(err, post) {
+                    if (err) {
+                        console.log(err);
+                        return res.sendStatus(500);
+                    } else if (post) {
+                        return res.status(201).json(thread);
+                    } else {
+                        thread.remove();
+                        return res.sendStatus(500);
+                    }
+                });
             } else {
-                res.status(201).json(thread);
+                return res.sendStatus(500);
             }
         });
     });
-
 
 // application router for /threads/:thread_id
 threadsRouter.route('/:thread_id')
@@ -98,7 +126,7 @@ threadsRouter.route('/:thread_id')
         return next();
     })
     .get(function(req, res, next) {
-        res.json(res.locals.thread);
+        return res.status(200).json(res.locals.thread);
     })
     // update thread if you are owner
     .put(checkUserIsThreadOwner, function(req, res, next) {
@@ -106,23 +134,21 @@ threadsRouter.route('/:thread_id')
         res.locals.thread.save(function(err, thread) {
             if (err) {
                 console.log(err);
-                res.sendStatus(500);
+                return res.sendStatus(500);
             } else {
-                res.locals.thread = thread;
-                res.json(res.locals.thread);
+                return res.status(200).json(res.locals.thread);
             }
         });
     })
     // delete post if you are owner
     .delete(checkUserIsThreadOwner, function(req, res, next) {
-        Thread
-            .findById(res.locals.thread._id)
+        res.locals.thread
             .remove(function(err) {
                 if (err) {
                     console.log(err);
-                    res.sendStatus(500);
+                    return res.sendStatus(500);
                 } else {
-                    res.sendStatus(204);
+                    return res.sendStatus(204);
                 }
             });
     });
@@ -144,47 +170,58 @@ threadsRouter.route('/:thread_id/posts')
         post.save(function(err, post) {
             if (err) {
                 console.log(err);
-                if (err["code"] == 11000) res.sendStatus(409);
-                else res.sendStatus(500);
+                if (err["code"] == 11000) {
+                    return res.sendStatus(409);
+                } else {
+                    return res.sendStatus(500);
+                }
             } else {
-                res.status(201).json(post);
+                return res.status(201).json(post);
             }
         });
     })
     // get all post in thread
     .get(sanetizePagination, function(req, res, next) {
-        var criteria = {
-            _thread: res.locals.thread._id
-        };
         Post
-            .find(criteria)
+            .find({
+                _thread: res.locals.thread._id
+            })
             .count(function(err, count) {
                 if (err) {
                     console.log(err);
-                    res.sendStatus(500);
+                    return res.sendStatus(500);
                 } else if (count) {
                     Post
-                        .find(criteria)
+                        .find({
+                            _thread: res.locals.thread._id
+                        })
                         .sort({
                             created_at: res.locals.order
                         })
                         .skip((res.locals.page - 1) * res.locals.size)
                         .limit(res.locals.size)
+                        .populate('_owner')
                         .exec(function(err, threads) {
                             if (err) {
                                 console.log(err);
-                                res.sendStatus(500);
+                                return res.sendStatus(500);
                             } else if (threads) {
-                                res.setHeader("Count", count);
-                                res.setHeader("Page", res.locals.page);
-                                res.setHeader("Pages", Math.ceil(count / res.locals.size));
-                                res.setHeader("Size", res.locals.size);
-                                res.json(threads);
-                            } else
-                                res.sendStatus(404);
+                                res.setHeader("count", count);
+                                res.setHeader("page", res.locals.page);
+                                res.setHeader("pages", Math.ceil(count / res.locals.size));
+                                res.setHeader("size", res.locals.size);
+                                return res.status(200).json(threads);
+                            } else {
+                                return res.sendStatus(500);
+                            }
                         });
-                } else
-                    res.sendStatus(404);
+                } else {
+                    res.setHeader("count", 0);
+                    res.setHeader("page", res.locals.page);
+                    res.setHeader("pages", 0);
+                    res.setHeader("size", res.locals.size);
+                    return res.status(200).json([]);
+                }
             });
     });
 

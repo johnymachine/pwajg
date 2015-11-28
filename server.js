@@ -1,7 +1,7 @@
 'use strict'
 
 // env vars
-var uri = process.env.MONGOLAB_URI;
+var uri = process.env.MONGOLAB_URI || 'mongodb://heroku_mzrxxkbb:qk2s2iv8rd3i9dm6tdh5gchdjg@ds041494.mongolab.com:41494/heroku_mzrxxkbb';
 var port = process.env.PORT || 8080;
 
 //required
@@ -36,18 +36,18 @@ router.all('*', function(req, res, next) {
     res.header('Access-Control-Allow-Origin', req.headers.origin);
     res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Credentials', false);
-    res.header('Access-Control-Max-Age', '86400');
     res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, token');
-    next();
+    res.header('Access-Control-Expose-Headers', 'count, page, pages, size');
+    return next();
 });
 
 router.options('*', function(req, res) {
-    res.sendStatus(200);
+    return res.sendStatus(200);
 });
 
 // root with API docs
-router.get('/', function(req, res) {
-    res.json({
+router.all('/', function(req, res) {
+    return res.status(200).json({
         welcome: "Welcome to discusion board API!",
         url: "http://pwajg-server.herokuapp.com/'",
         apiary: "http://docs.pwajg.apiary.io/",
