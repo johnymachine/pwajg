@@ -493,7 +493,7 @@ List of all the post inside thread.
 
 
 ### Post to thread [POST]
-Add new post to the thread.
+Post to thread
 
 + Request
     + Headers
@@ -535,8 +535,51 @@ Add new post to the thread.
 + Response 500 (application/json)
 
 
-### Delete post from thread [DELETE]
-Delete post from thread. Only owner of the post can do it. (otherwise **403 Forbiden**)
+# Group Posts
+
+## Post management [/threads/{post_id}]
+
++ Parameters
+    + post_id (id) - Post identificator
+
+
+### Get post detail [GET]
+Posts
+
++ Request
+    + Headers
+
+            token: {token}
+
++ Response 200 (application/json)
+
+        {
+            "_id": "565a3e67b9b374da1fcc6ac7",
+            "text": "Post1",
+            "_thread": "565a3e67b9b374daafcc6ac7",
+            "is_main": true,
+            "created_at": "2015-11-28T23:53:11.872Z",
+            "updated_at": "2015-11-28T23:53:11.872Z",
+            "_owner":
+                {
+                    "_id": "562d378641fecab81c826bac",
+                    "email": "jandeo@deo.com"
+                    "name": "John Deo",
+                    "username": "user1",
+                    "created_at": "2015-11-29T13:53:39.000Z",
+                    "updated_at": "2015-11-29T13:53:39.654Z"
+                }
+        }
+
++ Response 401 (application/json)
+
++ Response 404 (application/json)
+
++ Response 500 (application/json)
+
+
+### Update post [PUT]
+Update post
 
 + Request
     + Headers
@@ -546,8 +589,47 @@ Delete post from thread. Only owner of the post can do it. (otherwise **403 Forb
     + Body
     
             {
-                "post_id": "post_id"
+                "body": "Post body."
             }
+
++ Response 201 (application/json)
+
+        {
+            "_id": "565a3e67b9b374da1fcc6ac7",
+            "text": "Post2",
+            "_thread": "565c4e67b9b374daafcc6ac7",
+            "is_main": false,
+            "created_at": "2015-11-28T23:53:11.872Z",
+            "updated_at": "2015-11-28T23:53:11.872Z",
+            "_owner":
+                {
+                    "_id": "562d378641fecab81c826bac",
+                    "email": "jandeo@deo.com"
+                    "name": "John Deo",
+                    "username": "user1",
+                    "created_at": "2015-11-29T13:53:39.000Z",
+                    "updated_at": "2015-11-29T13:53:39.654Z"
+                }
+        }
+
++ Response 201 (application/json)
+
++ Response 401 (application/json)
+
++ Response 403 (application/json)
+
++ Response 409 (application/json)
+
++ Response 500 (application/json)
+
+
+### Delete post from thread [DELETE]
+Delete post from thread. Only owner of the post can do it. (otherwise **403 Forbiden**)
+
++ Request
+    + Headers
+
+            token: {token}
 
 + Response 204 (application/json)
 
