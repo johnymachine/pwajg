@@ -84,7 +84,7 @@ threadsRouter.route('/')
     // create new thread
     .post(function(req, res, next) {
         var threadText = req.body.title;
-        var postText = req.body.title;
+        var postText = req.body.body;
         if ((threadText == "" || threadText == null) || ((postText == "" || postText == null))) {
             return res.sendStatus(400);
         }
@@ -136,7 +136,7 @@ threadsRouter.route('/:thread_id')
     })
     // update thread if you are owner
     .put(checkUserIsThreadOwner, function(req, res, next) {
-        res.locals.thread.text = req.body.text
+        res.locals.thread.text = req.body.title
         res.locals.thread.save(function(err, thread) {
             if (err) {
                 console.log(err);
@@ -169,7 +169,7 @@ threadsRouter.route('/:thread_id/posts')
     // post to thread
     .post(function(req, res, next) {
         var post = new Post({
-            text: req.body.text,
+            text: req.body.body,
             _thread: res.locals.thread._id,
             _owner: res.locals.me._id
         });

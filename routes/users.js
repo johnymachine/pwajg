@@ -111,7 +111,7 @@ usersRouter.route('/:user_id')
     })
     // get user by id
     .get(function(req, res, next) {
-        return res.json(res.locals.user);
+        return res.status(200).json(res.locals.user);
     })
     // update my user info
     .put(checkUserIsMe, function(req, res, next) {
