@@ -5,6 +5,7 @@ HOST: http://pwajg-server.herokuapp.com/apiv1/
 
 Simple Node js server for Discussion board.
 
+
 # Group Authentication
 
 ## API token authentication [/auth]
@@ -89,15 +90,19 @@ By this action you invalidate your token. You wont be able to communicate with A
 
 + Response 500 (application/json)
 
+
 # Group User
 
-## User details [/users/{user_id}]
+## User collection [/users{?page,order,size}]
 
 + Parameters
-    + user_id (id) - User identificator
+    + page (optional) - Requested page in paggination
+    + order (optional) - Order of returned collection
+    + size (optional) - Number of items on page
+
 
 ### Get user details [GET]
-Get detailed information about user based on provided id.
+Query all users in system.
 
 + Request
     + Headers
@@ -107,12 +112,57 @@ Get detailed information about user based on provided id.
 
 + Response 200 (application/json)
 
-        {
-            "user_id": "id",
-            "login": "login"
-        }
+        [
+            {
+                "_id": "562d378641fecab81c706bac",
+                "email": "jandoe@doe.com"
+                "name": "John Doe",
+                "username": "user",
+                "created_at": "2015-11-29T13:53:39.000Z",
+                "updated_at": "2015-11-29T13:53:39.654Z"
+            },
+            {
+                "_id": "562d378641fecab81c826bac",
+                "email": "jandeo@deo.com"
+                "name": "John Deo",
+                "username": "user1",
+                "created_at": "2015-11-29T13:53:39.000Z",
+                "updated_at": "2015-11-29T13:53:39.654Z"
+            }
+        ]
         
-+ Response 404 (application/json)
++ Response 500 (application/json)
+
+
+### Register new user [POST]
+Register new user into the system.
+
++ Request
+    + Headers
+
+            token: {token}
+            
+    + Body
+
+            {
+                "email": "jandeo@deos.com",
+                "name": "John Deos",
+                "username": "user3",
+                "password": "secret"
+            }
+
+
++ Response 201 (application/json)
+
++ Response 409 (application/json)
+
++ Response 500 (application/json)
+
+## User details [/users/{user_id}]
+
++ Parameters
+    + user_id (id) - User identificator
+
 
 # Group Threds
 
