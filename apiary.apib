@@ -3,7 +3,33 @@ HOST: http://pwajg-server.herokuapp.com/apiv1/
 
 # pwajg-server
 
-Simple Node js server for Discussion board.
+Simple Node js server for Discussion board. Based on **MEAN** stack.
+
+**Assignment**
+
+Vaším úkolem je vypracovat jednoduchý komunikační systém - diskusní fórum. Výsledný systém se bude skládat z webové služby (backend) a klientské aplikace. Součástí řešení musí být také návrh rozhraní webové služby (API). Na rozdíl od našich předchozích setkání, zde je cílem spíše samotná cesta. Samotný problém je poměrně jednoduchý, jde mi více o kvalitu řešení a o to abyste o něm přemýšleli. Smyslem není to "spíchnout" za víkend za pomoci oblíbeného PHP frameworku, ale naučit se něco nového. 
+
+Komunikační systém by měl umět pracovat s entitou uživatele, uživatel by měl mít možnost zakládat nová diskusní vlákna (témata), přidávat příspěvky do diskusí a samozřejmě také diskuse číst. Další funkce (uživatelské role, kategorie vláken apod.) nejsou potřeba. 
+
+Jak klient, tak backend budou napsány v JavaScriptu. Backend poběží pod Node.js, pro klienta můžete použít některý z moderních JS frameworků - ReactJS, Angular, Ember aj. 
+
+Protože k NodeJS se dostaneme až v druhé polovině semestru, potřebujete pro psaní klienta mock server. K jeho vytvoření a zároveň k vytvoření specifikace API použijme službu Apiary.io. 
+
+_Postup řešení:_
+
++ identifikovat objekty (Resource) která bude vaše aplikace používat. Navrhnout jakou reprezentaci těchto objektů (JSON, HTML, ATOM, XML) bude server předkládat klientům.
++ návrh implementovat v podobě apiblueprintu (apiary)
++ vytvořit klienta komunikujícího s mock api (apiary služba)
++ vytvořit backend v NodeJS
++ backend službu zveřejnit pomocí některé cloudové služby (patrně Heroku)
+
+**Server**
++ Apiary documentation at: http://docs.pwajg.apiary.io/
++ Express REST backend aviable at http://pwajg-server.herokuapp.com/
++ Github repository: https://github.com/johnymachine/pwajg-server
+
+**Client**
++ Github repository: https://github.com/johnymachine/pwajg-client
 
 
 # Group Authentication
@@ -13,12 +39,11 @@ Authentization resource for session managment.
 
 
 ### Request new token [POST]
-
 Providing correct `login` and `password` of existing user returns authentication token for comunication with API. Returned token must by provided in `token` header with each subsequent request, otherwise you get back **401 Unauthorized** status code.
 + Request
 
         {
-            "username": "username",
+            "username": "user",
             "password": "password"
         }
 
