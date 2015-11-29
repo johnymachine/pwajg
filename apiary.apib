@@ -169,8 +169,8 @@ Query all users in system.
 + Response 500 (application/json)
 
 
-### Register new user [POST]
-Register new user into the system.
+### Create new user [POST]
+Create new user, this could be made without a being logged in.
 
 + Request
     + Headers
@@ -195,13 +195,13 @@ Register new user into the system.
 
 
 ## User details [/users/{user_id}]
-Manipulate with data of specific user.
+Manipulate specific users data.
 
 + Parameters
     + user_id (id) - User identificator
 
 
-### Get user by id [GET]
+### Get user [GET]
 Get single user by his id.
 
 + Request
@@ -224,7 +224,7 @@ Get single user by his id.
 
 + Response 500 (application/json)
 
-### Update user with id [PUT]
+### Update user [PUT]
 Update data of user specified by id. User is allowed to edit only him self. Otherwise **403 Forbidden** is returned.
 
 + Request
@@ -261,7 +261,7 @@ Update data of user specified by id. User is allowed to edit only him self. Othe
 + Response 500 (application/json)
 
 
-### Delete user by id [DELETE]
+### Delete user [DELETE]
 Removes user and all of his data from system. User is allowed to delete only him self. Otherwise **403 Forbidden** is returned. 
 
 + Request
@@ -366,6 +366,7 @@ Create new thread from provided data. Threads with same name are allowed. This a
 
 
 ## Thread detail [/threads/{thread_id}]
+Manipulate with data of specific thread.
 
 + Parameters
     + thread_id (id) - Thread identificator
@@ -404,7 +405,7 @@ Get detailed description od thread.
 
 
 ### Update thread [PUT]
-Update thread title. Only owner is allowed to edit, otherwise **403 Forbidden** is returned. 
+Updates thread title. Only owner is allowed to edit, otherwise **403 Forbidden** is returned. 
 
 + Request
     + Headers
@@ -446,7 +447,7 @@ Update thread title. Only owner is allowed to edit, otherwise **403 Forbidden** 
 
 
 ### Delete thread [DELETE]
-Deletes thread with all the posts in it. Only wner is allowed to edit, otherwise **403 Forbidden** is returned.
+Deletes thread with all the posts in it. Only owner is allowed to edit, otherwise **403 Forbidden** is returned.
 
 + Request
     + Headers
@@ -462,7 +463,7 @@ Deletes thread with all the posts in it. Only wner is allowed to edit, otherwise
 + Response 500 (application/json)
 
 
-## Posts in thread collection [/threads/{thread_id}/posts{?page,order,size}]
+## Posts collection [/threads/{thread_id}/posts{?page,order,size}]
 
 + Parameters
     + thread_id (id) - Thread identificator
@@ -471,8 +472,8 @@ Deletes thread with all the posts in it. Only wner is allowed to edit, otherwise
     + size (optional) - Number of items on page
 
   
-### Get all posts in thread [GET]
-List of all the post inside thread.
+### Posts in thread [GET]
+Query all users in system.
 
 + Request
     + Headers
@@ -520,7 +521,7 @@ List of all the post inside thread.
 
 
 ### Post to thread [POST]
-Post to thread
+Create new post to thread.
 
 + Request
     + Headers
@@ -565,6 +566,7 @@ Post to thread
 # Group Posts
 
 ## Post detail [/threads/{post_id}]
+Manipulate specific post data.
 
 + Parameters
     + post_id (id) - Post identificator
@@ -606,7 +608,7 @@ Returns details about post.
 
 
 ### Update post [PUT]
-Update post data. Only owner is allowed to edit, otherwise **403 Forbidden** is returned.
+Updates post data. Only owner is allowed to delete, otherwise **403 Forbidden** is returned.
 
 + Request
     + Headers
@@ -651,7 +653,7 @@ Update post data. Only owner is allowed to edit, otherwise **403 Forbidden** is 
 
 
 ### Delete post from thread [DELETE]
-Delete post from thread. Only owner is allowed to edit, otherwise **403 Forbidden** is returned.
+Deletes post from thread. Only owner is allowed to delete, otherwise **403 Forbidden** is returned.
 
 + Request
     + Headers
