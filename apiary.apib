@@ -169,7 +169,7 @@ Query all users in system.
 
 
 ### Create new user [POST]
-Create new user, this could be made without a being logged in.
+Create new user, this could be made without a being logged in. In case of user with same username or email **409 Conflict** is returned.
 
 + Request
     + Headers
@@ -224,7 +224,7 @@ Get single user by his id.
 + Response 500 (application/json)
 
 ### Update user [PUT]
-Update data of user specified by id. User is allowed to edit only him self. Otherwise **403 Forbidden** is returned.
+Update data of user specified by id. User is allowed to edit only him self. Otherwise **403 Forbidden** is returned. In case of user with same username or email **409 Conflict** is returned.
 
 + Request
     + Headers
@@ -340,7 +340,7 @@ Query all threads in system.
 
 
 ### Create new thread [POST]
-Create new thread from provided data. Threads with same name are allowed. This automaticly creates new post which serves as thread body with flag **is_main**.
+Create new thread from provided data. Threads with same name are allowed. This automaticly creates new post which serves as thread body with flag **is_main**. In case of thread with same title **409 Conflict** is returned.
 
 + Request
     + Headers
@@ -557,8 +557,6 @@ Create new post to thread.
 
 + Response 401 (application/json)
 
-+ Response 409 (application/json)
-
 + Response 500 (application/json)
 
 
@@ -645,8 +643,6 @@ Updates post data. Only owner is allowed to delete, otherwise **403 Forbidden** 
 + Response 401 (application/json)
 
 + Response 403 (application/json)
-
-+ Response 409 (application/json)
 
 + Response 500 (application/json)
 
