@@ -25,7 +25,7 @@ _Postup řešení:_
 
 **Server**
 + Apiary documentation at: http://docs.pwajg.apiary.io/
-+ Express REST backend aviable at http://pwajg-server.herokuapp.com/
++ Express REST backend aviable at http://pwajg-server.herokuapp.com/apiv1
 + Github repository: https://github.com/johnymachine/pwajg-server
 
 **Client**
@@ -34,12 +34,12 @@ _Postup řešení:_
 
 # Group Authentication
 
-## API token authentication [/auth]
-Authentization resource for session managment.
+## Token based authentication [/auth]
+Authentication resource for token managment.
 
 
-### Request new token [POST]
-Providing correct `login` and `password` of existing user returns authentication token for comunication with API. Returned token must by provided in `token` header with each subsequent request, otherwise you get back **401 Unauthorized** status code.
+### Issue new token [POST]
+When provided with correct `login` and `password` of existing user returns authentication token for comunication with API. Returned token must by provided in `token` header with each subsequent request (except when creatinng new user), otherwise you get back **401 Unauthorized** status code.
 + Request
 
         {
@@ -69,8 +69,8 @@ Providing correct `login` and `password` of existing user returns authentication
 + Response 500 (application/json)
 
 
-### Get authenticated user [GET]
-This action provides user information based on provided token.
+### Get user for token [GET]
+This action provides current user information based on provided token.
 
 + Request
     + Headers
@@ -95,7 +95,7 @@ This action provides user information based on provided token.
 
 ### Prolong token validity [PUT]
 
-This call prolongs your token validity by another 30 minutes. Note that every call with token prolongs token validity. This could be used to keep token alive by calling this resource on background.
+This call prolongs your token validity by another 30 minutes. Note that every call with token prolongs token validity. This could be used as minimal overhead to keep token alive by calling this resource on background.
 
 + Request
     + Headers
@@ -108,8 +108,8 @@ This call prolongs your token validity by another 30 minutes. Note that every ca
 
 + Response 500 (application/json)
 
-### Invalidate current token [DELETE]
-By this action you invalidate your token. You wont be able to communicate with API, until you perform you repeat authentification process.
+### Invalidate token [DELETE]
+By this action you invalidate your token. You won't be able to communicate with API, until you repeat authentification process.
 
 + Request
     + Headers
@@ -126,6 +126,7 @@ By this action you invalidate your token. You wont be able to communicate with A
 # Group User
 
 ## User collection [/users{?page,order,size}]
+Collection for listing users and creating new ones.
 
 + Parameters
     + page (optional) - Requested page in paggination
@@ -133,7 +134,7 @@ By this action you invalidate your token. You wont be able to communicate with A
     + size (optional) - Number of items on page
 
 
-### Get user details [GET]
+### Users [GET]
 Query all users in system.
 
 + Request
@@ -194,6 +195,7 @@ Register new user into the system.
 
 
 ## User details [/users/{user_id}]
+Manipulate with data of specific user.
 
 + Parameters
     + user_id (id) - User identificator
@@ -222,8 +224,8 @@ Get single user by his id.
 
 + Response 500 (application/json)
 
-### Update certain user by id [PUT]
-Get single user by his id.
+### Update user with id [PUT]
+Update data of user specified by id. User is allowed to edit only him self. Otherwise **403 Forbidden** is returned.
 
 + Request
     + Headers
@@ -259,8 +261,8 @@ Get single user by his id.
 + Response 500 (application/json)
 
 
-### Delete user [DELETE]
-Get single user by his id.
+### Delete user by id [DELETE]
+Removes user and all of his data from system. User is allowed to delete only him self. Otherwise **403 Forbidden** is returned. 
 
 + Request
     + Headers
@@ -276,9 +278,9 @@ Get single user by his id.
 + Response 500 (application/json)
 
 
-# Group Threds
+# Group Threads
 
-## Threds management [/threads{?page,order,size}]
+## Threads collection [/threads{?page,order,size}]
 
 + Parameters
     + page (optional) - Requested page in paggination
@@ -286,8 +288,8 @@ Get single user by his id.
     + size (optional) - Number of items on page
 
 
-### Get all threads [GET]
-Get all threads in application.
+### Threads [GET]
+Query all users in system.
 
 + Request
     + Headers
@@ -339,7 +341,7 @@ Get all threads in application.
 
 
 ### Create new thread [POST]
-Create new thread from provided data. Threads with same name are allowed.
+Create new thread from provided data. Threads with same name are allowed. This automaticly creates new post which serves as thread body with flag **is_main**.
 
 + Request
     + Headers
@@ -402,7 +404,7 @@ Get detailed description od thread.
 
 
 ### Update thread [PUT]
-Update thread title.
+Update thread title. Only owner is allowed to edit, otherwise **403 Forbidden** is returned. 
 
 + Request
     + Headers
@@ -444,7 +446,7 @@ Update thread title.
 
 
 ### Delete thread [DELETE]
-Deletes thread with all the posts in it. Only owner of the thread can do it. (otherwise **403 Forbiden**)
+Deletes thread with all the posts in it. Only wner is allowed to edit, otherwise **403 Forbidden** is returned.
 
 + Request
     + Headers
@@ -460,7 +462,7 @@ Deletes thread with all the posts in it. Only owner of the thread can do it. (ot
 + Response 500 (application/json)
 
 
-## Posts in thread [/threads/{thread_id}/posts{?page,order,size}]
+## Posts in thread collection [/threads/{thread_id}/posts{?page,order,size}]
 
 + Parameters
     + thread_id (id) - Thread identificator
@@ -562,14 +564,14 @@ Post to thread
 
 # Group Posts
 
-## Post management [/threads/{post_id}]
+## Post detail [/threads/{post_id}]
 
 + Parameters
     + post_id (id) - Post identificator
 
 
 ### Get post detail [GET]
-Posts
+Returns details about post.
 
 + Request
     + Headers
@@ -604,7 +606,7 @@ Posts
 
 
 ### Update post [PUT]
-Update post
+Update post data. Only owner is allowed to edit, otherwise **403 Forbidden** is returned.
 
 + Request
     + Headers
@@ -649,7 +651,7 @@ Update post
 
 
 ### Delete post from thread [DELETE]
-Delete post from thread. Only owner of the post can do it. (otherwise **403 Forbiden**)
+Delete post from thread. Only owner is allowed to edit, otherwise **403 Forbidden** is returned.
 
 + Request
     + Headers
