@@ -158,10 +158,80 @@ Register new user into the system.
 
 + Response 500 (application/json)
 
+
 ## User details [/users/{user_id}]
 
 + Parameters
     + user_id (id) - User identificator
+
+
+### Get user by id [GET]
+Get single user by his id.
+
++ Request
+    + Headers
+
+            token: {token}
+
++ Response 200 (application/json)
+        
+        {
+            "_id": "562d378641fecab81c826bac",
+            "email": "jandeo@deo.com"
+            "name": "John Deo",
+            "username": "user1",
+            "created_at": "2015-11-29T13:53:39.000Z",
+            "updated_at": "2015-11-29T13:53:39.654Z"
+        }
+
+### Update certain user by id [PUT]
+Get single user by his id.
+
++ Request
+    + Headers
+
+            token: {token}
+            
+    + Body
+
+            {
+                "email": "jandeo@deos.com",
+                "name": "John Deos",
+                "username": "user3",
+                "password": "secret"
+            }
+
++ Response 200 (application/json)
+        
+        {
+            "_id": "562d378641fecab81c826bac",
+            "email": "jandeo@deo.com"
+            "name": "John Deo",
+            "username": "user1",
+            "created_at": "2015-11-29T13:53:39.000Z",
+            "updated_at": "2015-11-29T13:53:39.654Z"
+        }
+
++ Response 403 (application/json)
+
++ Response 409 (application/json)
+
++ Response 500 (application/json)
+
+
+### Delete user [DELETE]
+Get single user by his id.
+
++ Request
+    + Headers
+
+            token: {token}
+
++ Response 204 (application/json)
+
++ Response 403 (application/json)
+
++ Response 500 (application/json)
 
 
 # Group Threds
