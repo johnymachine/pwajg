@@ -391,7 +391,23 @@ Update thread title.
             }
 
 
-+ Response 201 (application/json)
++ Response 200 (application/json)
+
+        {
+            "_id": "565a3e67b9b374da1fcc6ac7",
+            "text": "Thread2",
+            "created_at": "2015-11-28T23:53:11.872Z",
+            "updated_at": "2015-11-28T23:53:11.872Z",
+            "_owner":
+                {
+                    "_id": "562d378641fecab81c826bac",
+                    "email": "jandeo@deo.com"
+                    "name": "John Deo",
+                    "username": "user1",
+                    "created_at": "2015-11-29T13:53:39.000Z",
+                    "updated_at": "2015-11-29T13:53:39.654Z"
+                }
+        }
 
 + Response 401 (application/json)
 
@@ -419,11 +435,15 @@ Deletes thread with all the posts in it. Only owner of the thread can do it. (ot
 + Response 500 (application/json)
 
 
-## Posts in thread [/threads/{thread_id}/posts]
+## Posts in thread [/threads/{thread_id}/posts{?page,order,size}]
 
 + Parameters
     + thread_id (id) - Thread identificator
-    
+    + page (optional) - Requested page in paggination
+    + order (optional) - Order of returned collection
+    + size (optional) - Number of items on page
+
+  
 ### Get all posts in thread [GET]
 List of all the post inside thread.
 
@@ -436,18 +456,41 @@ List of all the post inside thread.
 
         [
         {
-            "post_id": "post_id1",
-            "user_id": "user_id",
-            "body": "body",
-            "crated": "timestamp"
+            "_id": "565a3e67b9b374da1fcc6ac7",
+            "text": "Post1",
+            "_thread": "565a3e67b9b374daafcc6ac7",
+            "is_main": true,
+            "created_at": "2015-11-28T23:53:11.872Z",
+            "updated_at": "2015-11-28T23:53:11.872Z",
+            "_owner":
+                {
+                    "_id": "562d378641fecab81c826bac",
+                    "email": "jandeo@deo.com"
+                    "name": "John Deo",
+                    "username": "user1",
+                    "created_at": "2015-11-29T13:53:39.000Z",
+                    "updated_at": "2015-11-29T13:53:39.654Z"
+                }
         },
         {
-            "post_id": "post_id2",
-            "user_id": "user_id",
-            "body": "body",
-            "crated": "timestamp"
+            "_id": "565a3e67b9b374da1fcc6ac7",
+            "text": "Post2",
+            "_thread": "565c4e67b9b374daafcc6ac7",
+            "is_main": false,
+            "created_at": "2015-11-28T23:53:11.872Z",
+            "updated_at": "2015-11-28T23:53:11.872Z",
+            "_owner":
+                {
+                    "_id": "562d378641fecab81c826bac",
+                    "email": "jandeo@deo.com"
+                    "name": "John Deo",
+                    "username": "user1",
+                    "created_at": "2015-11-29T13:53:39.000Z",
+                    "updated_at": "2015-11-29T13:53:39.654Z"
+                }
         }
         ]
+
 
 ### Post to thread [POST]
 Add new post to the thread.
@@ -460,7 +503,7 @@ Add new post to the thread.
     + Body
     
             {
-                "body": "body"
+                "body": "Post body."
             }
 
 + Response 201 (application/json)
