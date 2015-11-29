@@ -1,7 +1,7 @@
 'use strict'
 
 // env vars
-var uri = process.env.MONGOLAB_URI || 'mongodb://heroku_mzrxxkbb:qk2s2iv8rd3i9dm6tdh5gchdjg@ds041494.mongolab.com:41494/heroku_mzrxxkbb';
+var uri = process.env.MONGOLAB_URI;
 var port = process.env.PORT || 8080;
 
 //required
