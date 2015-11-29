@@ -16,7 +16,11 @@ var authSchema = new Schema({
         required: true
     },
     created_at: Date,
-    updated_at: Date
+    updated_at: Date,
+    __v: {
+        type: Number,
+        select: false
+    }
 });
 
 authSchema.pre('save', model.updateTimestamps);

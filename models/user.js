@@ -24,10 +24,15 @@ var userSchema = new Schema({
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        select: false
     },
     created_at: Date,
-    updated_at: Date
+    updated_at: Date,
+    __v: {
+        type: Number,
+        select: false
+    }
 });
 
 var hashPassword = function hashPassword(next) {

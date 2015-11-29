@@ -16,7 +16,11 @@ var threadSchema = new Schema({
         unique: true
     },
     created_at: Date,
-    updated_at: Date
+    updated_at: Date,
+    __v: {
+        type: Number,
+        select: false
+    }
 });
 
 var deleteAllThreadPosts = function deleteAllThreadPosts(next) {

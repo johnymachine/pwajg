@@ -24,7 +24,11 @@ var postSchema = new Schema({
         required: true
     },
     created_at: Date,
-    updated_at: Date
+    updated_at: Date,
+    __v: {
+        type: Number,
+        select: false
+    }
 });
 
 postSchema.pre('save', model.updateTimestamps);
