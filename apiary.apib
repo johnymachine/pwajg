@@ -288,7 +288,7 @@ Removes user and all of his data from system. User is allowed to delete only him
 
 
 ### Threads [GET]
-Query all users in system.
+Query all threads in system.
 
 + Request
     + Headers
@@ -371,7 +371,7 @@ Manipulate with data of specific thread.
     + thread_id (id) - Thread identificator
 
     
-### Get thread detail [GET]
+### Get thread [GET]
 Get detailed description od thread.
 
 + Request
@@ -471,8 +471,8 @@ Deletes thread with all the posts in it. Only owner is allowed to edit, otherwis
     + size (optional) - Number of items on page
 
   
-### Posts in thread [GET]
-Query all users in system.
+### Posts[GET]
+Query all post inside of specified thread.
 
 + Request
     + Headers
@@ -519,7 +519,7 @@ Query all users in system.
         ]
 
 
-### Post to thread [POST]
+### Created new post [POST]
 Create new post to thread.
 
 + Request
@@ -571,7 +571,7 @@ Manipulate specific post data.
     + post_id (id) - Post identificator
 
 
-### Get post detail [GET]
+### Get post [GET]
 Returns details about post.
 
 + Request
@@ -651,7 +651,7 @@ Updates post data. Only owner is allowed to delete, otherwise **403 Forbidden** 
 + Response 500 (application/json)
 
 
-### Delete post from thread [DELETE]
+### Delete post [DELETE]
 Deletes post from thread. Only owner is allowed to delete, otherwise **403 Forbidden** is returned.
 
 + Request
