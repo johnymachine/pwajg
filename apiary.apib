@@ -507,13 +507,33 @@ Add new post to the thread.
             }
 
 + Response 201 (application/json)
-        
+
         {
-            "post_id": "post_id",
-            "user_id": "user_id",
-            "body": "body",
-            "crated": "timestamp"
+            "_id": "565a3e67b9b374da1fcc6ac7",
+            "text": "Post2",
+            "_thread": "565c4e67b9b374daafcc6ac7",
+            "is_main": false,
+            "created_at": "2015-11-28T23:53:11.872Z",
+            "updated_at": "2015-11-28T23:53:11.872Z",
+            "_owner":
+                {
+                    "_id": "562d378641fecab81c826bac",
+                    "email": "jandeo@deo.com"
+                    "name": "John Deo",
+                    "username": "user1",
+                    "created_at": "2015-11-29T13:53:39.000Z",
+                    "updated_at": "2015-11-29T13:53:39.654Z"
+                }
         }
+
++ Response 201 (application/json)
+
++ Response 401 (application/json)
+
++ Response 409 (application/json)
+
++ Response 500 (application/json)
+
 
 ### Delete post from thread [DELETE]
 Delete post from thread. Only owner of the post can do it. (otherwise **403 Forbiden**)
@@ -531,4 +551,8 @@ Delete post from thread. Only owner of the post can do it. (otherwise **403 Forb
 
 + Response 204 (application/json)
 
++ Response 401 (application/json)
+
 + Response 403 (application/json)
+
++ Response 500 (application/json)
