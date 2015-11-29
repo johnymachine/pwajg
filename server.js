@@ -49,7 +49,7 @@ router.options('*', function(req, res) {
 router.all('/', function(req, res) {
     return res.status(200).json({
         welcome: "Welcome to discusion board API!",
-        url: "http://pwajg-server.herokuapp.com/'",
+        url: "http://pwajg-server.herokuapp.com/apiv1",
         apiary: "http://docs.pwajg.apiary.io/",
         github: "https://github.com/johnymachine/pwajg-server"
     });
