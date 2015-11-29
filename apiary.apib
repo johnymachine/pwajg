@@ -10,6 +10,7 @@ Simple Node js server for Discussion board.
 ## API token authentication [/auth]
 Authentization resource for session managment.
 
+
 ### Request new token [POST]
 
 Providing correct `login` and `password` of existing user returns authentication token for comunication with API. Returned token must by provided in `token` header with each subsequent request, otherwise you get back **401 Unauthorized** status code.
@@ -20,34 +21,27 @@ Providing correct `login` and `password` of existing user returns authentication
             "password": "password"
         }
 
-+ Response 200 (application/json)
++ Response 201 (application/json)
 
         {
-            "token": "ac4cb54caac5bca7ef455",
+           "_id": "565b03636f50bc470cc6bcd4",
+           "_owner": {
+              "_id": "562d378641fecab81c706bac",
+              "email": "jandoe@doe.com"
+              "name": "John Doe",
+              "username": "user",
+              "created_at": "2015-11-29T13:53:39.000Z",
+              "updated_at": "2015-11-29T13:53:39.654Z"
+           },
+           "created_at": "2015-11-29T13:53:39.000Z",
+           "token": "16c7e5c8627b3e9a73b4b79d4b5d9a802cd0cc094f35db1af4b146768e6656787899db04310f67bd64d3204b300fbb3634f79aea03faa2ebfea6a578d1415ac7",
+           "updated_at": "2015-11-29T13:53:39.654Z"
         }
 
 + Response 404 (application/json)
 
-### Prolong token validity [PUT]
++ Response 500 (application/json)
 
-This call prolongs your token validity by another 30 minutes. Note that every call with token prolongs token validity. This could be used to keep token alive by calling this resource on background.
-
-+ Request
-    + Headers
-
-            token: {token}
-
-+ Response 200 (application/json)
-
-### Invalidate current token [DELETE]
-By this action you invalidate your token. You wont be able to communicate with API, until you perform you repeat authentification process.
-
-+ Request
-    + Headers
-
-            token: {token}
-
-+ Response 200 (application/json)
 
 ### Get authenticated user [GET]
 This action provides user information based on provided token.
@@ -60,10 +54,41 @@ This action provides user information based on provided token.
 + Response 200 (application/json)
 
         {
-            "user_id": "id",
-            "login": "login"
+            "_id": "562d378641fecab81c706bac",
+            "email": "jandoe@doe.com"
+            "name": "John Doe",
+            "username": "user",
+            "created_at": "2015-11-29T13:53:39.000Z",
+            "updated_at": "2015-11-29T13:53:39.654Z"
         }
         
++ Response 500 (application/json)
+
+
+### Prolong token validity [PUT]
+
+This call prolongs your token validity by another 30 minutes. Note that every call with token prolongs token validity. This could be used to keep token alive by calling this resource on background.
+
++ Request
+    + Headers
+
+            token: {token}
+
++ Response 200 (application/json)
+
+
+### Invalidate current token [DELETE]
+By this action you invalidate your token. You wont be able to communicate with API, until you perform you repeat authentification process.
+
++ Request
+    + Headers
+
+            token: {token}
+
++ Response 204 (application/json)
+
++ Response 500 (application/json)
+
 # Group User
 
 ## User details [/users/{user_id}]
