@@ -62,7 +62,9 @@ This action provides user information based on provided token.
             "created_at": "2015-11-29T13:53:39.000Z",
             "updated_at": "2015-11-29T13:53:39.654Z"
         }
-        
+
++ Response 401 (application/json)        
+
 + Response 500 (application/json)
 
 
@@ -77,6 +79,9 @@ This call prolongs your token validity by another 30 minutes. Note that every ca
 
 + Response 200 (application/json)
 
++ Response 401 (application/json)
+
++ Response 500 (application/json)
 
 ### Invalidate current token [DELETE]
 By this action you invalidate your token. You wont be able to communicate with API, until you perform you repeat authentification process.
@@ -87,6 +92,8 @@ By this action you invalidate your token. You wont be able to communicate with A
             token: {token}
 
 + Response 204 (application/json)
+
++ Response 401 (application/json)
 
 + Response 500 (application/json)
 
@@ -131,6 +138,8 @@ Query all users in system.
             }
         ]
         
++ Response 401 (application/json)
+
 + Response 500 (application/json)
 
 
@@ -184,6 +193,10 @@ Get single user by his id.
             "updated_at": "2015-11-29T13:53:39.654Z"
         }
 
++ Response 401 (application/json)
+
++ Response 500 (application/json)
+
 ### Update certain user by id [PUT]
 Get single user by his id.
 
@@ -214,6 +227,8 @@ Get single user by his id.
 
 + Response 403 (application/json)
 
++ Response 401 (application/json)
+
 + Response 409 (application/json)
 
 + Response 500 (application/json)
@@ -228,6 +243,8 @@ Get single user by his id.
             token: {token}
 
 + Response 204 (application/json)
+
++ Response 401 (application/json)
 
 + Response 403 (application/json)
 
