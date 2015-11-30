@@ -26,8 +26,13 @@ var threadSchema = new Schema({
 var deleteAllThreadPosts = function deleteAllThreadPosts(next) {
     Post.remove({
         _thread: this._id
+    }, function(err) {
+        if (err) {
+            colsole.log(err);
+        } else {
+            return next();
+        }
     });
-    return next();
 }
 
 threadSchema.pre('save', model.updateTimestamps);

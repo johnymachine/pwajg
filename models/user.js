@@ -47,22 +47,37 @@ var hashPassword = function hashPassword(next) {
 var deleteAllMyPosts = function deleteAllMyPosts(next) {
     Post.remove({
         _owner: this._id
+    }, function(err) {
+        if (err) {
+            colsole.log(err);
+        } else {
+            return next();
+        }
     });
-    return next();
 }
 
 var deleteAllMyThreads = function deleteAllMyThreads(next) {
     Thread.remove({
         _owner: this._id
+    }, function(err) {
+        if (err) {
+            colsole.log(err);
+        } else {
+            return next();
+        }
     });
-    return next();
 }
 
-var deleteMyAuth = function deleteAllMyThreads(next) {
+var deleteMyAuth = function deleteMyAuth(next) {
     Auth.remove({
         _owner: this._id
+    }, function(err) {
+        if (err) {
+            colsole.log(err);
+        } else {
+            return next();
+        }
     });
-    return next();
 }
 
 userSchema.pre('save', hashPassword, model.updateTimestamps);

@@ -19,15 +19,6 @@ var postsRouter = require('./routes/posts.js');
 //mongoose
 var mongoose = require('mongoose');
 
-//connect to mongodb
-mongoose.connect(uri, function(err, res) {
-    if (err) {
-        console.log("Error connecting to Mongodb: " + err);
-    } else {
-        console.log("Successfully connected to Mongodb.");
-    }
-});
-
 // set up body parser
 app.use(bodyParser.json())
 
@@ -64,6 +55,14 @@ router.use('/posts/', postsRouter);
 // bind main router and make prefix /apiv1
 app.use("/apiv1", router);
 
-// start server
-app.listen(port);
-console.log("Server is running on port: " + port);
+//connect to mongodb
+mongoose.connect(uri, function(err, res) {
+    if (err) {
+        console.log("Error connecting to Mongodb: " + err);
+    } else {
+        console.log("Successfully connected to Mongodb.");
+        // start server
+        app.listen(port);
+        console.log("Server is running on port: " + port);
+    }
+});
