@@ -1,7 +1,7 @@
 'use strict'
 
 // env vars
-var uri = process.env.MONGOLAB_URI || 'mongodb://heroku_mzrxxkbb:qk2s2iv8rd3i9dm6tdh5gchdjg@ds041494.mongolab.com:41494/heroku_mzrxxkbb';
+var uri = process.env.MONGOLAB_URI;
 var port = process.env.PORT || 8080;
 
 //required
@@ -49,7 +49,7 @@ router.options('*', function(req, res) {
 router.all('/', function(req, res) {
     return res.status(200).json({
         welcome: "Welcome to discusion board API!",
-        url: "http://pwajg-server.herokuapp.com/'",
+        url: "http://pwajg-server.herokuapp.com/apiv1",
         apiary: "http://docs.pwajg.apiary.io/",
         github: "https://github.com/johnymachine/pwajg-server"
     });

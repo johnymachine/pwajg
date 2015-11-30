@@ -3,22 +3,47 @@ HOST: http://pwajg-server.herokuapp.com/apiv1/
 
 # pwajg-server
 
-Simple Node js server for Discussion board.
+Simple Node js server for Discussion board. Based on **MEAN** stack.
+
+**Assignment**
+
+Vaším úkolem je vypracovat jednoduchý komunikační systém - diskusní fórum. Výsledný systém se bude skládat z webové služby (backend) a klientské aplikace. Součástí řešení musí být také návrh rozhraní webové služby (API). Na rozdíl od našich předchozích setkání, zde je cílem spíše samotná cesta. Samotný problém je poměrně jednoduchý, jde mi více o kvalitu řešení a o to abyste o něm přemýšleli. Smyslem není to "spíchnout" za víkend za pomoci oblíbeného PHP frameworku, ale naučit se něco nového. 
+
+Komunikační systém by měl umět pracovat s entitou uživatele, uživatel by měl mít možnost zakládat nová diskusní vlákna (témata), přidávat příspěvky do diskusí a samozřejmě také diskuse číst. Další funkce (uživatelské role, kategorie vláken apod.) nejsou potřeba. 
+
+Jak klient, tak backend budou napsány v JavaScriptu. Backend poběží pod Node.js, pro klienta můžete použít některý z moderních JS frameworků - ReactJS, Angular, Ember aj. 
+
+Protože k NodeJS se dostaneme až v druhé polovině semestru, potřebujete pro psaní klienta mock server. K jeho vytvoření a zároveň k vytvoření specifikace API použijme službu Apiary.io. 
+
+_Postup řešení:_
+
++ identifikovat objekty (Resource) která bude vaše aplikace používat. Navrhnout jakou reprezentaci těchto objektů (JSON, HTML, ATOM, XML) bude server předkládat klientům.
++ návrh implementovat v podobě apiblueprintu (apiary)
++ vytvořit klienta komunikujícího s mock api (apiary služba)
++ vytvořit backend v NodeJS
++ backend službu zveřejnit pomocí některé cloudové služby (patrně Heroku)
+
+**Server**
++ Apiary documentation at: http://docs.pwajg.apiary.io/
++ Express REST backend aviable at http://pwajg-server.herokuapp.com/apiv1
++ Github repository: https://github.com/johnymachine/pwajg-server
+
+**Client**
++ Github repository: https://github.com/johnymachine/pwajg-client
 
 
 # Group Authentication
 
-## API token authentication [/auth]
-Authentization resource for session managment.
+## Token based authentication [/auth]
+Authentication resource for token managment.
 
 
-### Request new token [POST]
-
-Providing correct `login` and `password` of existing user returns authentication token for comunication with API. Returned token must by provided in `token` header with each subsequent request, otherwise you get back **401 Unauthorized** status code.
+### Issue new token [POST]
+When provided with correct `login` and `password` of existing user returns authentication token for comunication with API. Returned token must by provided in `token` header with each subsequent request (except when creatinng new user), otherwise you get back **401 Unauthorized** status code.
 + Request
 
         {
-            "username": "username",
+            "username": "user",
             "password": "password"
         }
 
@@ -44,8 +69,8 @@ Providing correct `login` and `password` of existing user returns authentication
 + Response 500 (application/json)
 
 
-### Get authenticated user [GET]
-This action provides user information based on provided token.
+### Get user for token [GET]
+This action provides current user information based on provided token.
 
 + Request
     + Headers
@@ -70,7 +95,7 @@ This action provides user information based on provided token.
 
 ### Prolong token validity [PUT]
 
-This call prolongs your token validity by another 30 minutes. Note that every call with token prolongs token validity. This could be used to keep token alive by calling this resource on background.
+This call prolongs your token validity by another 30 minutes. Note that every call with token prolongs token validity. This could be used as minimal overhead to keep token alive by calling this resource on background.
 
 + Request
     + Headers
@@ -83,8 +108,8 @@ This call prolongs your token validity by another 30 minutes. Note that every ca
 
 + Response 500 (application/json)
 
-### Invalidate current token [DELETE]
-By this action you invalidate your token. You wont be able to communicate with API, until you perform you repeat authentification process.
+### Invalidate token [DELETE]
+By this action you invalidate your token. You won't be able to communicate with API, until you repeat authentification process.
 
 + Request
     + Headers
@@ -108,7 +133,7 @@ By this action you invalidate your token. You wont be able to communicate with A
     + size (optional) - Number of items on page
 
 
-### Get user details [GET]
+### Users [GET]
 Query all users in system.
 
 + Request
@@ -143,8 +168,8 @@ Query all users in system.
 + Response 500 (application/json)
 
 
-### Register new user [POST]
-Register new user into the system.
+### Create new user [POST]
+Create new user, this could be made without a being logged in. In case of user with same username or email **409 Conflict** is returned.
 
 + Request
     + Headers
@@ -169,12 +194,13 @@ Register new user into the system.
 
 
 ## User details [/users/{user_id}]
+Manipulate specific users data.
 
 + Parameters
     + user_id (id) - User identificator
 
 
-### Get user by id [GET]
+### Get user [GET]
 Get single user by his id.
 
 + Request
@@ -197,8 +223,8 @@ Get single user by his id.
 
 + Response 500 (application/json)
 
-### Update certain user by id [PUT]
-Get single user by his id.
+### Update user [PUT]
+Update data of user specified by id. User is allowed to edit only him self. Otherwise **403 Forbidden** is returned. In case of user with same username or email **409 Conflict** is returned.
 
 + Request
     + Headers
@@ -235,7 +261,7 @@ Get single user by his id.
 
 
 ### Delete user [DELETE]
-Get single user by his id.
+Removes user and all of his data from system. User is allowed to delete only him self. Otherwise **403 Forbidden** is returned. 
 
 + Request
     + Headers
@@ -251,9 +277,9 @@ Get single user by his id.
 + Response 500 (application/json)
 
 
-# Group Threds
+# Group Threads
 
-## Threds management [/threads{?page,order,size}]
+## Threads collection [/threads{?page,order,size}]
 
 + Parameters
     + page (optional) - Requested page in paggination
@@ -261,8 +287,8 @@ Get single user by his id.
     + size (optional) - Number of items on page
 
 
-### Get all threads [GET]
-Get all threads in application.
+### Threads [GET]
+Query all threads in system.
 
 + Request
     + Headers
@@ -314,7 +340,7 @@ Get all threads in application.
 
 
 ### Create new thread [POST]
-Create new thread from provided data. Threads with same name are allowed.
+Create new thread from provided data. Threads with same name are allowed. This automaticly creates new post which serves as thread body with flag **is_main**. In case of thread with same title **409 Conflict** is returned.
 
 + Request
     + Headers
@@ -339,12 +365,13 @@ Create new thread from provided data. Threads with same name are allowed.
 
 
 ## Thread detail [/threads/{thread_id}]
+Manipulate with data of specific thread.
 
 + Parameters
     + thread_id (id) - Thread identificator
 
     
-### Get thread detail [GET]
+### Get thread [GET]
 Get detailed description od thread.
 
 + Request
@@ -377,7 +404,7 @@ Get detailed description od thread.
 
 
 ### Update thread [PUT]
-Update thread title.
+Updates thread title. Only owner is allowed to edit, otherwise **403 Forbidden** is returned. 
 
 + Request
     + Headers
@@ -419,7 +446,7 @@ Update thread title.
 
 
 ### Delete thread [DELETE]
-Deletes thread with all the posts in it. Only owner of the thread can do it. (otherwise **403 Forbiden**)
+Deletes thread with all the posts in it. Only owner is allowed to edit, otherwise **403 Forbidden** is returned.
 
 + Request
     + Headers
@@ -435,7 +462,7 @@ Deletes thread with all the posts in it. Only owner of the thread can do it. (ot
 + Response 500 (application/json)
 
 
-## Posts in thread [/threads/{thread_id}/posts{?page,order,size}]
+## Posts collection [/threads/{thread_id}/posts{?page,order,size}]
 
 + Parameters
     + thread_id (id) - Thread identificator
@@ -444,8 +471,8 @@ Deletes thread with all the posts in it. Only owner of the thread can do it. (ot
     + size (optional) - Number of items on page
 
   
-### Get all posts in thread [GET]
-List of all the post inside thread.
+### Posts[GET]
+Query all post inside of specified thread.
 
 + Request
     + Headers
@@ -492,8 +519,8 @@ List of all the post inside thread.
         ]
 
 
-### Post to thread [POST]
-Post to thread
+### Created new post [POST]
+Create new post to thread.
 
 + Request
     + Headers
@@ -530,21 +557,20 @@ Post to thread
 
 + Response 401 (application/json)
 
-+ Response 409 (application/json)
-
 + Response 500 (application/json)
 
 
 # Group Posts
 
-## Post management [/threads/{post_id}]
+## Post detail [/threads/{post_id}]
+Manipulate specific post data.
 
 + Parameters
     + post_id (id) - Post identificator
 
 
-### Get post detail [GET]
-Posts
+### Get post [GET]
+Returns details about post.
 
 + Request
     + Headers
@@ -579,7 +605,7 @@ Posts
 
 
 ### Update post [PUT]
-Update post
+Updates post data. Only owner is allowed to delete, otherwise **403 Forbidden** is returned.
 
 + Request
     + Headers
@@ -618,13 +644,11 @@ Update post
 
 + Response 403 (application/json)
 
-+ Response 409 (application/json)
-
 + Response 500 (application/json)
 
 
-### Delete post from thread [DELETE]
-Delete post from thread. Only owner of the post can do it. (otherwise **403 Forbiden**)
+### Delete post [DELETE]
+Deletes post from thread. Only owner is allowed to delete, otherwise **403 Forbidden** is returned.
 
 + Request
     + Headers
