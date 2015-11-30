@@ -5,6 +5,6 @@ module.exports = {
         this.updated_at = currentDate;
         if (!this.created_at)
             this.created_at = currentDate;
-        next();
+        return next();
     }
 }

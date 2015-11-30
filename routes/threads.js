@@ -29,7 +29,7 @@ threadsRouter
     });
 
 var checkUserIsThreadOwner = function checkUserIsThreadOwner(req, res, next) {
-    if (res.locals.thread._owner.equals(res.locals.me._id)) {
+    if (res.locals.thread._owner._id.equals(res.locals.me._id)) {
         return next();
     } else
         return res.sendStatus(403);

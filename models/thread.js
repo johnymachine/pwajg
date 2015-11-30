@@ -27,6 +27,7 @@ var deleteAllThreadPosts = function deleteAllThreadPosts(next) {
     Post.remove({
         _thread: this._id
     });
+    return next();
 }
 
 threadSchema.pre('save', model.updateTimestamps);

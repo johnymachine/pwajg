@@ -48,18 +48,21 @@ var deleteAllMyPosts = function deleteAllMyPosts(next) {
     Post.remove({
         _owner: this._id
     });
+    return next();
 }
 
 var deleteAllMyThreads = function deleteAllMyThreads(next) {
     Thread.remove({
         _owner: this._id
     });
+    return next();
 }
 
 var deleteMyAuth = function deleteAllMyThreads(next) {
     Auth.remove({
         _owner: this._id
     });
+    return next();
 }
 
 userSchema.pre('save', hashPassword, model.updateTimestamps);
